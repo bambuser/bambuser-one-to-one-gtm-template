@@ -106,6 +106,14 @@ ___TEMPLATE_PARAMETERS___
     "groupStyle": "ZIPPY_CLOSED",
     "subParams": [
       {
+        "type": "TEXT",
+        "name": "customerData",
+        "displayName": "Customer Data",
+        "simpleValueType": true,
+        "valueHint": "jsonObject",
+        "help": "A jsonObject including information about the customer such as name, email, customer number that will be shown to the agent in the call. Reference: https://bambuser.com/docs/one-to-one/initial-setup#provide-customer-data"
+      },
+      {
         "type": "CHECKBOX",
         "name": "datalayerTracking",
         "checkboxText": "Track Bambuser events to the datalayer",
@@ -137,11 +145,41 @@ ___TEMPLATE_PARAMETERS___
 ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 const callInWindow = require('callInWindow');
+const getType = require('getType');
 const injectScript = require('injectScript');
+const JSON = require('JSON');
 const log = require('logToConsole');
 const makeInteger = require('makeInteger');
+const Object = require('Object');
 const queryPermission = require('queryPermission');
 const setInWindow = require('setInWindow');
+
+const cleanNestedData = function (obj) {
+  return Object.entries(obj).reduce(function (acc, item) {
+    const key = item[0];
+    const value = item[1];
+    const itemType = getType(value);
+    if (itemType !== 'object' && itemType !== 'array' && itemType !== 'function') {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+};
+
+const parseCustomerData = function(customerData) {
+  const type = getType(customerData);
+  if (type === 'string') {
+    const parsed = JSON.parse(customerData);
+    if (!parsed) {
+      return undefined;
+    }
+    return cleanNestedData(parsed);
+  } else if (type==='object'){
+    return cleanNestedData(customerData);
+  } else if (type === 'function') {
+    return customerData;
+  }
+};
 
 const conf = {
     orgId: data.bambuserOrgId,
@@ -158,6 +196,9 @@ const conf = {
 };
 if (!!data.queueId) { conf.queue = data.queueId; }
 if (!!data.locale) { conf.locale = data.locale; }
+
+const customerInfo = parseCustomerData(data.customerData);
+if (!!customerInfo) { conf.data = customerInfo; }
 
 const launch = function() {
   const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf);
