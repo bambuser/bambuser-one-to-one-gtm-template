@@ -200,8 +200,9 @@ if (!!data.locale) { conf.locale = data.locale; }
 const customerInfo = parseCustomerData(data.customerData);
 if (!!customerInfo) { conf.data = customerInfo; }
 
-const launch = function() {
-  const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf);
+const launch = function(debugMode) {
+  const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf, debugMode);
+  log('successfully created one-to-one instance');
   data.gtmOnSuccess();
 };
 
