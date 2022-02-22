@@ -212,7 +212,13 @@ if(queryPermission('access_globals', 'write', 'onBambuserOneToOneReady')) {
 
   const url = 'https://one-to-one.bambuser.com/embed.js';
   if (queryPermission('inject_script', url)) {
-    injectScript(url);
+    injectScript(url, function() {
+      log('success inject');
+      launch(data.launchInDebugMode);
+    }, function() {
+      log('failed inject');
+      data.gtmOnFailure();
+    });
   }
 }
 
