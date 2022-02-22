@@ -158,14 +158,18 @@ const cleanNestedData = function (obj) {
     const key = item[0];
     const value = item[1];
     const itemType = getType(value);
-    if (itemType !== 'object' && itemType !== 'array' && itemType !== 'function') {
+    if (
+      itemType !== 'object' &&
+      itemType !== 'array' &&
+      itemType !== 'function'
+    ) {
       acc[key] = value;
     }
     return acc;
   }, {});
 };
 
-const parseCustomerData = function(customerData) {
+const parseCustomerData = function (customerData) {
   const type = getType(customerData);
   if (type === 'string') {
     const parsed = JSON.parse(customerData);
@@ -173,7 +177,7 @@ const parseCustomerData = function(customerData) {
       return undefined;
     }
     return cleanNestedData(parsed);
-  } else if (type==='object'){
+  } else if (type === 'object') {
     return cleanNestedData(customerData);
   } else if (type === 'function') {
     return customerData;
@@ -181,25 +185,26 @@ const parseCustomerData = function(customerData) {
 };
 
 const conf = {
-    orgId: data.bambuserOrgId,
-    triggers: [
-      'manual',
-      'connect-link', 
-      'smart',
-    ],
-    smartVariantOverride: data.overlayWidgetVariant,
-    popupTimeoutSeconds: makeInteger(data.overlayWidgetPopupTimeuot) || 2,
-    datalayerTracking: data.datalayerTracking,
-    ecommerceTracking: data.ecommerceTracking
-  
+  orgId: data.bambuserOrgId,
+  triggers: ['manual', 'connect-link', 'smart'],
+  smartVariantOverride: data.overlayWidgetVariant,
+  popupTimeoutSeconds: makeInteger(data.overlayWidgetPopupTimeuot) || 2,
+  datalayerTracking: data.datalayerTracking,
+  ecommerceTracking: data.ecommerceTracking,
 };
-if (!!data.queueId) { conf.queue = data.queueId; }
-if (!!data.locale) { conf.locale = data.locale; }
+if (!!data.queueId) {
+  conf.queue = data.queueId;
+}
+if (!!data.locale) {
+  conf.locale = data.locale;
+}
 
 const customerInfo = parseCustomerData(data.customerData);
-if (!!customerInfo) { conf.data = customerInfo; }
+if (!!customerInfo) {
+  conf.data = customerInfo;
+}
 
-const launch = function(debugMode) {
+const launch = function (debugMode) {
   const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf, debugMode);
   log('successfully created one-to-one instance');
   data.gtmOnSuccess();
@@ -207,13 +212,17 @@ const launch = function(debugMode) {
 
 const url = 'https://one-to-one.bambuser.com/embed.js';
 if (queryPermission('inject_script', url)) {
-  injectScript(url, function() {
-    log('success inject');
-    launch(data.launchInDebugMode);
-  }, function() {
-    log('failed inject');
-    data.gtmOnFailure();
-  });
+  injectScript(
+    url,
+    function () {
+      log('success inject');
+      launch(data.launchInDebugMode);
+    },
+    function () {
+      log('failed inject');
+      data.gtmOnFailure();
+    }
+  );
 }
 
 return conf;
@@ -337,9 +346,8 @@ ___TESTS___
 
 scenarios:
 - name: Can inject script
-  code: |
-    const mockData = {
-    };
+  code: |-
+    const mockData = {};
 
     runCode(mockData);
     assertApi('injectScript').wasCalled();
