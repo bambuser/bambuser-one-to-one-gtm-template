@@ -343,6 +343,98 @@ scenarios:
 
     runCode(mockData);
     assertApi('injectScript').wasCalled();
+- name: Allow string as customer data
+  code: |-
+    const mockData = {
+      customerData: '{"name": "John Doe", "customerId": "1234"}'
+    };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data.name).isEqualTo("John Doe");
+    assertThat(config.data.customerId).isEqualTo("1234");
+    assertApi('callInWindow').wasCalled();
+- name: Allow object as customer data
+  code: |-
+    const mockData = {
+      customerData: {"name": "John Doe", "customerId": "1234"}
+    };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data.name).isEqualTo("John Doe");
+    assertThat(config.data.customerId).isEqualTo("1234");
+    assertApi('callInWindow').wasCalled();
+- name: Allow null as customer data
+  code: |-
+    const mockData = { customerData: null };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data).isUndefined();
+    assertApi('callInWindow').wasCalled();
+- name: Allow function as customer data
+  code: |-
+    const customerDataFunc = function () {
+     return {};
+    };
+
+    const mockData = {
+      customerData: customerDataFunc
+    };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data).isStrictlyEqualTo(customerDataFunc);
+    assertApi('callInWindow').wasCalled();
+- name: Will remove nested customer data
+  code: |-
+    const nestedDataKey = "nestedData";
+
+    const mockData = {
+      customerData: {"name": "John Doe", "customerId": "1337", nestedDataKey: { "mockData": "shouldBeRemoved" }}
+    };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data.name).isEqualTo("John Doe");
+    assertThat(config.data.customerId).isEqualTo("1337");
+    assertThat(config.data[nestedDataKey]).isUndefined();
+    assertApi('callInWindow').wasCalled();
+- name: Handle non-JSON string as customer data
+  code: |-
+    const mockData = {
+      customerData: 'string'
+    };
+
+    mock('injectScript', function(url, callback) { callback(); });
+
+    // Call runCode to run the template's code.
+    const config = runCode(mockData);
+
+    // Verify that the tag finished successfully.
+    assertThat(config.data).isUndefined();
+    assertApi('callInWindow').wasCalled();
 
 
 ___NOTES___
