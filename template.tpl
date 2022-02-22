@@ -152,7 +152,6 @@ const log = require('logToConsole');
 const makeInteger = require('makeInteger');
 const Object = require('Object');
 const queryPermission = require('queryPermission');
-const setInWindow = require('setInWindow');
 
 const cleanNestedData = function (obj) {
   return Object.entries(obj).reduce(function (acc, item) {
@@ -206,20 +205,15 @@ const launch = function(debugMode) {
   data.gtmOnSuccess();
 };
 
-if(queryPermission('access_globals', 'write', 'onBambuserOneToOneReady')) {
-  setInWindow('onBambuserOneToOneReady', launch, data.launchInDebugMode);
-
-
-  const url = 'https://one-to-one.bambuser.com/embed.js';
-  if (queryPermission('inject_script', url)) {
-    injectScript(url, function() {
-      log('success inject');
-      launch(data.launchInDebugMode);
-    }, function() {
-      log('failed inject');
-      data.gtmOnFailure();
-    });
-  }
+const url = 'https://one-to-one.bambuser.com/embed.js';
+if (queryPermission('inject_script', url)) {
+  injectScript(url, function() {
+    log('success inject');
+    launch(data.launchInDebugMode);
+  }, function() {
+    log('failed inject');
+    data.gtmOnFailure();
+  });
 }
 
 return conf;
@@ -323,45 +317,6 @@ ___WEB_PERMISSIONS___
                   {
                     "type": 8,
                     "boolean": true
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "onBambuserOneToOneReady"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
                   }
                 ]
               }
