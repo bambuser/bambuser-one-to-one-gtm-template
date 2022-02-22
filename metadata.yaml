@@ -17,5 +17,7 @@
 homepage: "https://bambuser.com"
 documentation: "https://bambuser.com/docs"
 versions:
+  - sha: b70dcb1c4f7aa831954d0d57c346fbcaa87a829a
+    changeNotes: Add support to pass in customer data
   - sha: db48db08212ea50d331b6315aac175186bb0af93
     changeNotes: Initial Version
