@@ -63,15 +63,15 @@ ___TEMPLATE_PARAMETERS___
         "selectItems": [
           {
             "value": "Avatar",
-            "displayValue": "Avatar"
+            "displayValue": "1. Avatar"
           },
           {
             "value": "Side dock",
-            "displayValue": "Side dock"
+            "displayValue": "2. Side dock"
           },
           {
             "value": "none",
-            "displayValue": "None"
+            "displayValue": "3. None (Not recommended)"
           }
         ],
         "simpleValueType": true
