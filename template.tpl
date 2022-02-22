@@ -222,6 +222,8 @@ if(queryPermission('access_globals', 'write', 'onBambuserOneToOneReady')) {
   }
 }
 
+return conf;
+
 
 ___WEB_PERMISSIONS___
 
