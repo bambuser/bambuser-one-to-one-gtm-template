@@ -223,6 +223,8 @@ if (queryPermission('inject_script', url)) {
       data.gtmOnFailure();
     }
   );
+} else {
+  data.gtmOnFailure();
 }
 
 return conf;
