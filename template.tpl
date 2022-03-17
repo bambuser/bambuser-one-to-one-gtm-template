@@ -205,9 +205,13 @@ if (!!customerInfo) {
 }
 
 const launch = function (debugMode) {
-  const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf, debugMode);
-  log('successfully created one-to-one instance');
-  data.gtmOnSuccess();
+  if (queryPermission('access_globals', 'execute', 'launchBambuserOneToOne')) {
+    const oneToOneEmbed = callInWindow('launchBambuserOneToOne', conf, debugMode);
+    log('successfully created one-to-one instance');
+    data.gtmOnSuccess();
+  } else {
+    data.gtmOnFailure();
+  }
 };
 
 const url = 'https://one-to-one.bambuser.com/embed.js';
